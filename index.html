@@ -95,41 +95,68 @@
 
   .hero-desc strong { color: var(--text); font-weight: 600; }
 
-  .stat-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 16px;
+  /* ─── STAT CARDS ─── */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+
+  .stat-card {
     background: var(--s1);
     border: 1px solid var(--border2);
     border-radius: 10px;
-    padding: 14px 20px;
-    margin-bottom: 36px;
-    max-width: 100%;
+    padding: 18px 16px;
+    position: relative;
+    overflow: hidden;
   }
 
-  .stat-number {
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at top left, rgba(0,232,122,.04), transparent 70%);
+    pointer-events: none;
+  }
+
+  .stat-card-number {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(38px, 9vw, 52px);
+    font-size: clamp(28px, 6vw, 38px);
     color: var(--danger);
     line-height: 1;
-    flex-shrink: 0;
+    display: block;
+    margin-bottom: 6px;
   }
 
-  .stat-label {
+  .stat-card-label {
     font-family: 'Inter', sans-serif;
-    font-size: clamp(11px, 2.5vw, 13px);
+    font-size: clamp(10px, 2vw, 12px);
     color: var(--sub);
     line-height: 1.5;
     font-weight: 400;
   }
 
-  /* ─── BUTTONS ─── */
+  /* ─── BUTTONS with animated gradient ─── */
+  @keyframes rotateGrad {
+    0%   { --angle: 135deg; }
+    100% { --angle: 495deg; }
+  }
+
+  @property --angle {
+    syntax: '<angle>';
+    initial-value: 135deg;
+    inherits: false;
+  }
+
   .btn-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    background: linear-gradient(135deg, #00E87A 0%, #00C463 60%, #009E50 100%);
+    background: linear-gradient(var(--angle, 135deg), #00E87A 0%, #00C463 40%, #009E50 65%, #00E87A 100%);
+    background-size: 200% 200%;
+    animation: rotateGrad 3s linear infinite;
     color: #030A07;
     font-family: 'Inter', sans-serif;
     font-size: clamp(12px, 2.5vw, 13px);
@@ -146,21 +173,21 @@
     position: relative;
     overflow: hidden;
     transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 20px rgba(0,232,122,.2);
+    box-shadow: 0 4px 20px rgba(0,232,122,.25);
   }
 
   .btn-primary::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,.12) 0%, transparent 60%);
+    background: linear-gradient(135deg, rgba(255,255,255,.12) 0%, transparent 50%);
     pointer-events: none;
   }
 
   .btn-primary:hover {
     opacity: .92;
     transform: translateY(-1px);
-    box-shadow: 0 8px 28px rgba(0,232,122,.3);
+    box-shadow: 0 8px 28px rgba(0,232,122,.35);
   }
 
   .btn-diagnose {
@@ -169,7 +196,8 @@
     justify-content: center;
     gap: 10px;
     width: 100%;
-    background: linear-gradient(135deg, #00E87A 0%, #00C463 60%, #009E50 100%);
+    background: linear-gradient(var(--angle, 135deg), #00E87A 0%, #00C463 40%, #009E50 65%, #00E87A 100%);
+    animation: rotateGrad 3s linear infinite;
     color: #030A07;
     font-family: 'Inter', sans-serif;
     font-size: clamp(12px, 2.5vw, 13px);
@@ -184,21 +212,21 @@
     position: relative;
     overflow: hidden;
     transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 4px 20px rgba(0,232,122,.2);
+    box-shadow: 0 4px 20px rgba(0,232,122,.25);
   }
 
   .btn-diagnose::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,.12) 0%, transparent 60%);
+    background: linear-gradient(135deg, rgba(255,255,255,.12) 0%, transparent 50%);
     pointer-events: none;
   }
 
   .btn-diagnose:hover {
     opacity: .92;
     transform: translateY(-1px);
-    box-shadow: 0 8px 28px rgba(0,232,122,.3);
+    box-shadow: 0 8px 28px rgba(0,232,122,.35);
   }
 
   /* ─── SECTIONS ─── */
@@ -216,44 +244,6 @@
 
   h2 em { font-style: normal; color: var(--acc); }
   h2 span { color: var(--danger); }
-
-  /* ─── PHOTO BAND ─── */
-  .photo-band {
-    width: 100%;
-    height: clamp(180px, 28vw, 260px);
-    position: relative;
-    overflow: hidden;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .photo-band img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    filter: brightness(0.55) saturate(0.7);
-  }
-
-  .photo-band-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, rgba(3,10,7,.92) 0%, rgba(3,10,7,.35) 55%, rgba(3,10,7,.7) 100%);
-    display: flex;
-    align-items: center;
-    padding: 0 clamp(24px, 6vw, 80px);
-  }
-
-  .photo-band-text {
-    font-family: 'Inter', sans-serif;
-    font-size: clamp(16px, 3.5vw, 26px);
-    font-weight: 700;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
-    max-width: 400px;
-  }
-
-  .photo-band-text em { color: var(--acc); font-style: normal; }
 
   /* ─── PAIN ─── */
   .pain-list { display: flex; flex-direction: column; gap: 2px; }
@@ -400,7 +390,6 @@
 
   .range-hint { font-size: 10px; color: var(--sub2); letter-spacing: .04em; font-family: 'Inter', sans-serif; }
 
-  /* results */
   .calc-results {
     margin-top: 32px;
     padding-top: 32px;
@@ -486,15 +475,7 @@
   }
 
   .total-sub { font-size: 12px; color: var(--sub2); line-height: 1.5; font-weight: 300; }
-
-  .disclaimer {
-    text-align: center;
-    font-size: 12px;
-    color: var(--sub2);
-    margin-top: 14px;
-    font-weight: 300;
-    font-family: 'Inter', sans-serif;
-  }
+  .disclaimer { text-align: center; font-size: 12px; color: var(--sub2); margin-top: 14px; font-weight: 300; font-family: 'Inter', sans-serif; }
 
   /* ─── CASE ─── */
   .case-card {
@@ -536,6 +517,28 @@
     margin-left: auto;
   }
 
+  .case-photo {
+    width: 100%;
+    height: clamp(160px, 25vw, 240px);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .case-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    filter: brightness(0.65) saturate(0.75);
+    display: block;
+  }
+
+  .case-photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, var(--s1) 100%);
+  }
+
   .case-body { padding: clamp(20px, 5vw, 32px); }
 
   .case-desc {
@@ -548,11 +551,7 @@
 
   .case-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
 
-  .case-metric {
-    padding: 20px;
-    background: var(--s2);
-  }
-
+  .case-metric { padding: 20px; background: var(--s2); }
   .case-metric:nth-child(1) { border-radius: 8px 0 0 0; }
   .case-metric:nth-child(2) { border-radius: 0 8px 0 0; }
   .case-metric:nth-child(3) { border-radius: 0 0 0 8px; }
@@ -593,15 +592,18 @@
 
   /* ─── MOBILE ─── */
   @media (max-width: 520px) {
+    .stat-row { grid-template-columns: 1fr; gap: 8px; }
     .input-row { grid-template-columns: 1fr; gap: 0; }
     .results-grid { grid-template-columns: 1fr; }
     .case-metrics { grid-template-columns: 1fr; }
     .case-metric:nth-child(1) { border-radius: 8px 8px 0 0; }
-    .case-metric:nth-child(2),
-    .case-metric:nth-child(3) { border-radius: 0; }
+    .case-metric:nth-child(2), .case-metric:nth-child(3) { border-radius: 0; }
     .case-metric:nth-child(4) { border-radius: 0 0 8px 8px; }
     .btn-primary { max-width: 100%; }
-    .stat-pill { width: 100%; }
+  }
+
+  @media (min-width: 521px) and (max-width: 680px) {
+    .stat-row { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
@@ -626,9 +628,19 @@
       O crescimento sustentável de uma mentoria high-ticket não depende apenas da aquisição. A eficiência operacional reside na <strong>experiência estratégica do aluno</strong> e na retenção pró-ativa baseada em dados.
     </p>
 
-    <div class="stat-pill">
-      <span class="stat-number">23%</span>
-      <span class="stat-label">de cancelamento médio em mentorias<br>sem CS pró-ativo com sistema</span>
+    <div class="stat-row">
+      <div class="stat-card">
+        <span class="stat-card-number">23%</span>
+        <span class="stat-card-label">churn médio em mentorias sem CS pró-ativo com sistema</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card-number">67%</span>
+        <span class="stat-card-label">das renovações são perdidas por timing errado</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card-number">3×</span>
+        <span class="stat-card-label">mais receita retida com acompanhamento proativo</span>
+      </div>
     </div>
 
     <a href="#calculadora" class="btn-primary">
@@ -639,19 +651,6 @@
   </div>
 </section>
 
-<!-- ─── PHOTO BAND ─── -->
-<div class="photo-band">
-  <img src="https://raw.githubusercontent.com/gspvecchi-wq/diagnostico-cs/main/gam.png"
-       alt="Acelerador Médico"
-       onerror="this.parentElement.style.background='var(--s1)'; this.style.display='none'">
-  <div class="photo-band-overlay">
-    <p class="photo-band-text">
-      O sistema de CS<br>construído para<br>
-      <em>mentorias que escalam.</em>
-    </p>
-  </div>
-</div>
-
 <div class="divider"></div>
 
 <!-- ─── DOR ─── -->
@@ -660,7 +659,6 @@
     <h2>Cenas que acontecem<br>na sua mentoria <span>agora</span></h2>
 
     <div class="pain-list">
-
       <div class="pain-item">
         <span class="pain-num">01</span>
         <svg class="pain-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
@@ -673,7 +671,6 @@
           <div class="pain-desc">Enquanto isso, um aluno parou de aparecer nas aulas. Uma semana. Duas. Três. Ninguém notou — porque ninguém tinha como notar. Quando alguém percebe, ele já decidiu que não vale a pena continuar.</div>
         </div>
       </div>
-
       <div class="pain-item">
         <span class="pain-num">02</span>
         <svg class="pain-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
@@ -685,7 +682,6 @@
           <div class="pain-desc">Não interagiu essa semana. Nem na semana passada. Você acha que está bem — afinal, não reclamou. Mas silêncio não é satisfação. É distância. E quando ele finalmente fala, é pra pedir o cancelamento.</div>
         </div>
       </div>
-
       <div class="pain-item">
         <span class="pain-num">03</span>
         <svg class="pain-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
@@ -699,7 +695,6 @@
           <div class="pain-desc">Não relata vitórias. Não faz perguntas. Fica quieto nas calls. Por dentro, sente que está ficando para trás — mas não quer parecer o único que não está aplicando. Esse aluno não vai renovar. E você nunca vai saber por quê.</div>
         </div>
       </div>
-
     </div>
   </div>
 </section>
@@ -819,6 +814,13 @@
         <span class="case-tag">Case real</span>
       </div>
 
+      <div class="case-photo">
+        <img src="https://raw.githubusercontent.com/gspvecchi-wq/diagnostico-cs/main/gam.jpg"
+             alt="Acelerador Médico"
+             onerror="this.parentElement.style.display='none'">
+        <div class="case-photo-overlay"></div>
+      </div>
+
       <div class="case-body">
         <p class="case-desc">
           Mentoria high ticket para médicos que querem escalar consultórios e construir negócios sólidos — centenas de alunos ativos em múltiplas turmas simultâneas.
@@ -838,7 +840,7 @@
             <span class="case-metric-label">de receita identificada em oportunidades de renovação</span>
           </div>
           <div class="case-metric">
-            <span class="case-metric-value" style="font-size:clamp(18px,4vw,24px); line-height:1.2; letter-spacing:.01em;">Ascensão<br>Sniper</span>
+            <span class="case-metric-value" style="font-size:clamp(18px,4vw,24px);line-height:1.2;letter-spacing:.01em;">Ascensão<br>Sniper</span>
             <span class="case-metric-label">Visibilidade do momento exato de upsell — do primeiro sinal de risco ao ponto ideal</span>
           </div>
         </div>
