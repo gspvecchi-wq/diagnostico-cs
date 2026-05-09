@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PerformanCS — Quanto você está perdendo agora?</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #060810;
+    --surface: #0d1120;
+    --surface2: #131929;
+    --border: rgba(255,255,255,0.07);
+    --accent: #4f7fff;
+    --accent2: #7c3aed;
+    --danger: #ff4d6d;
+    --success: #00d68f;
+    --text: #eef0f8;
+    --muted: #7b85a3;
+    --card-glow: rgba(79,127,255,0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* AMBIENT GLOW */
+  .ambient {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.15;
+  }
+  .ambient-1 { width: 600px; height: 600px; background: var(--accent); top: -200px; left: -200px; }
+  .ambient-2 { width: 500px; height: 500px; background: var(--accent2); bottom: -150px; right: -100px; }
+
+  /* LAYOUT */
+  .container { max-width: 760px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 0 60px;
+    position: relative;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(79,127,255,0.1);
+    border: 1px solid rgba(79,127,255,0.25);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #7ea8ff;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    width: fit-content;
+  }
+
+  .badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+    position: relative;
+  }
+
+  h1 em::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    border-radius: 2px;
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 580px;
+    line-height: 1.7;
+    margin-bottom: 48px;
+  }
+
+  .hero-sub strong { color: var(--text); font-weight: 500; }
+
+  /* STAT ROW */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--card-glow), transparent);
+    pointer-events: none;
+  }
+
+  .stat-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--danger);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* CTA BUTTON */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, var(--accent), #6366f1);
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 18px 36px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    letter-spacing: 0.01em;
+    box-shadow: 0 8px 32px rgba(79,127,255,0.3), 0 0 0 1px rgba(255,255,255,0.05);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .btn-primary:hover::before { left: 100%; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(79,127,255,0.4), 0 0 0 1px rgba(255,255,255,0.1); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .arrow-icon { font-size: 18px; transition: transform 0.3s; }
+  .btn-primary:hover .arrow-icon { transform: translateX(4px); }
+
+  /* PAIN SECTION */
+  .section {
+    padding: 80px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(26px, 4vw, 40px);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 40px;
+  }
+
+  h2 span { color: var(--danger); }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0;
+  }
+
+  /* PAIN ITEMS */
+  .pain-list { display: flex; flex-direction: column; gap: 20px; }
+
+  .pain-item {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .pain-item:hover { border-color: rgba(255,77,109,0.3); transform: translateX(4px); }
+
+  .pain-icon {
+    width: 44px; height: 44px;
+    background: rgba(255,77,109,0.1);
+    border: 1px solid rgba(255,77,109,0.2);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .pain-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .pain-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* CALCULATOR */
+  #calculadora {
+    background: var(--surface);
+    border: 1px solid rgba(79,127,255,0.2);
+    border-radius: 24px;
+    padding: 48px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #calculadora::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .calc-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+
+  .calc-subtitle { font-size: 14px; color: var(--muted); margin-bottom: 36px; }
+
+  .input-group { margin-bottom: 24px; }
+
+  .input-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+  }
+
+  .input-group label span { color: var(--accent); font-size: 11px; font-weight: 400; margin-left: 6px; }
+
+  .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 4px;
+    background: var(--surface2);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 12px rgba(79,127,255,0.5);
+    transition: transform 0.2s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+  .range-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+  }
+
+  .range-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .range-hint { font-size: 11px; color: var(--muted); }
+
+  /* RESULTS */
+  .calc-results {
+    margin-top: 36px;
+    padding-top: 36px;
+    border-top: 1px solid var(--border);
+    display: none;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .results-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 28px; }
+
+  .result-card {
+    padding: 20px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+  }
+
+  .result-card.danger { background: rgba(255,77,109,0.06); border-color: rgba(255,77,109,0.2); }
+  .result-card.success { background: rgba(0,214,143,0.06); border-color: rgba(0,214,143,0.2); }
+
+  .result-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+
+  .result-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+  }
+
+  .result-card.danger .result-value { color: var(--danger); }
+  .result-card.success .result-value { color: var(--success); }
+
+  .result-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .total-loss {
+    background: linear-gradient(135deg, rgba(255,77,109,0.1), rgba(255,77,109,0.05));
+    border: 1px solid rgba(255,77,109,0.25);
+    border-radius: 16px;
+    padding: 24px 28px;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .total-label { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+
+  .total-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--danger);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .total-sub { font-size: 13px; color: var(--muted); }
+
+  .btn-diagnose {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #00d68f, #00b377);
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 20px 36px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    letter-spacing: 0.01em;
+    box-shadow: 0 8px 32px rgba(0,214,143,0.25);
+  }
+
+  .btn-diagnose:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(0,214,143,0.35); }
+
+  .disclaimer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 16px;
+  }
+
+  /* SOCIAL PROOF */
+  .proof-section { padding: 60px 0; position: relative; z-index: 1; }
+
+  .proof-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 24px;
+    font-size: 14px;
+    color: var(--muted);
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .proof-badge .icon { font-size: 20px; }
+  .proof-badge strong { color: var(--text); font-weight: 600; }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 40px 0;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    position: relative; z-index: 1;
+  }
+
+  footer strong { color: var(--text); }
+
+  /* ANIMATIONS */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(24px);
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  .fade-in:nth-child(1) { animation-delay: 0.1s; }
+  .fade-in:nth-child(2) { animation-delay: 0.2s; }
+  .fade-in:nth-child(3) { animation-delay: 0.3s; }
+  .fade-in:nth-child(4) { animation-delay: 0.4s; }
+
+  @media (max-width: 600px) {
+    .stat-row { grid-template-columns: 1fr; }
+    .input-row { grid-template-columns: 1fr; }
+    .results-grid { grid-template-columns: 1fr; }
+    #calculadora { padding: 28px 20px; }
+    .total-value { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ambient ambient-1"></div>
+<div class="ambient ambient-2"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="badge fade-in">PerformanCS · Sistema de CS para Mentorias</div>
+
+    <h1 class="fade-in">
+      Seus alunos estão<br>
+      saindo — e você<br>
+      <em>não está vendo</em>
+    </h1>
+
+    <p class="hero-sub fade-in">
+      Mentorias high ticket perdem em média <strong>20% a 30% da receita por ciclo</strong> por falta de visibilidade sobre engajamento, renovação e upsell.<br><br>
+      Calcule agora o que está saindo do seu bolso todo mês.
+    </p>
+
+    <div class="stat-row fade-in">
+      <div class="stat-card">
+        <span class="stat-number">23%</span>
+        <span class="stat-label">churn médio em mentorias sem CS estruturado</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">67%</span>
+        <span class="stat-label">das renovações são perdidas por timing errado</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">3×</span>
+        <span class="stat-label">mais receita retida com acompanhamento proativo</span>
+      </div>
+    </div>
+
+    <a href="#calculadora" class="btn-primary fade-in">
+      Calcular quanto estou perdendo
+      <span class="arrow-icon">→</span>
+    </a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- DOR -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">O problema</p>
+    <h2>Você sabe quem vai <span>cancelar</span><br>antes que aconteça?</h2>
+
+    <div class="pain-list">
+      <div class="pain-item">
+        <div class="pain-icon">👻</div>
+        <div>
+          <div class="pain-title">Aluno some sem aviso</div>
+          <div class="pain-desc">O desengajamento começa semanas antes do cancelamento. Sem dados de presença e engajamento em tempo real, seu CS só descobre quando já é tarde.</div>
+        </div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-icon">📅</div>
+        <div>
+          <div class="pain-title">Renovação perdida por timing</div>
+          <div class="pain-desc">A janela ideal para abordar uma renovação dura poucos dias. Sem identificar o momento certo, você chega tarde — ou nem chega.</div>
+        </div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-icon">📊</div>
+        <div>
+          <div class="pain-title">Planilha não é gestão</div>
+          <div class="pain-desc">Atualização manual, sem alertas, sem score por aluno. Você acha que está gerindo — mas está apenas registrando. A diferença custa muito dinheiro.</div>
+        </div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-icon">💸</div>
+        <div>
+          <div class="pain-title">Upsell deixado na mesa</div>
+          <div class="pain-desc">Alunos prontos para subir de nível ficam parados porque ninguém identificou o sinal certo. Cada um desses representa receita que você não capturou.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CALCULADORA -->
+<section class="section" id="calculadora-section">
+  <div class="container">
+    <p class="section-label">Calculadora de perda</p>
+    <h2>Quanto você está<br>perdendo <span>agora</span>?</h2>
+
+    <div id="calculadora">
+      <p class="calc-title">Descubra em 30 segundos</p>
+      <p class="calc-subtitle">Ajuste os valores abaixo para ver o impacto real na sua receita</p>
+
+      <div class="input-group">
+        <label>Ticket médio por aluno <span>por ciclo</span></label>
+        <input type="range" id="ticket" min="2000" max="50000" step="500" value="10000" oninput="calcular()">
+        <div class="range-display">
+          <div class="range-value" id="ticket-val">R$ 10.000</div>
+          <div class="range-hint">R$2k — R$50k</div>
+        </div>
+      </div>
+
+      <div class="input-row">
+        <div class="input-group">
+          <label>Alunos ativos</label>
+          <input type="range" id="alunos" min="10" max="500" step="5" value="80" oninput="calcular()">
+          <div class="range-display">
+            <div class="range-value" id="alunos-val">80</div>
+            <div class="range-hint">10 — 500</div>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Churn atual <span>% por ciclo</span></label>
+          <input type="range" id="churn" min="1" max="40" step="1" value="15" oninput="calcular()">
+          <div class="range-display">
+            <div class="range-value" id="churn-val">15%</div>
+            <div class="range-hint">1% — 40%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-row">
+        <div class="input-group">
+          <label>Taxa de renovação identificada <span>% alunos</span></label>
+          <input type="range" id="renovacao" min="5" max="60" step="5" value="30" oninput="calcular()">
+          <div class="range-display">
+            <div class="range-value" id="renovacao-val">30%</div>
+            <div class="range-hint">5% — 60%</div>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Ciclos por ano</label>
+          <input type="range" id="ciclos" min="1" max="6" step="1" value="2" oninput="calcular()">
+          <div class="range-display">
+            <div class="range-value" id="ciclos-val">2</div>
+            <div class="range-hint">1 — 6</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULTS -->
+      <div class="calc-results" id="results">
+        <div class="results-grid">
+          <div class="result-card danger">
+            <div class="result-label">🔴 Alunos perdidos por ciclo</div>
+            <div class="result-value" id="r-alunos-perdidos">—</div>
+            <div class="result-sub">por cancelamento</div>
+          </div>
+          <div class="result-card danger">
+            <div class="result-label">🔴 Receita perdida por ciclo</div>
+            <div class="result-value" id="r-receita-ciclo">—</div>
+            <div class="result-sub">sem recuperação</div>
+          </div>
+          <div class="result-card success">
+            <div class="result-label">🟢 Renovações que você perde</div>
+            <div class="result-value" id="r-renovacoes">—</div>
+            <div class="result-sub">por ciclo sem CS estruturado</div>
+          </div>
+          <div class="result-card success">
+            <div class="result-label">🟢 Receita de renovação perdida</div>
+            <div class="result-value" id="r-renovacao-val">—</div>
+            <div class="result-sub">por ciclo</div>
+          </div>
+        </div>
+
+        <div class="total-loss">
+          <div class="total-label">Você está deixando escapar todo ano</div>
+          <div class="total-value" id="r-total">R$ 0</div>
+          <div class="total-sub">entre churn não recuperado + renovações perdidas</div>
+        </div>
+
+        <a href="#" class="btn-diagnose">
+          Quero recuperar essa receita — agendar diagnóstico
+          <span>→</span>
+        </a>
+        <p class="disclaimer">Sessão gratuita · 30 min · Sem compromisso</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROVA SOCIAL -->
+<section class="proof-section">
+  <div class="container">
+    <p class="section-label">Validado em produção</p>
+    <h2>Construído dentro do<br>Acelerador Médico</h2>
+
+    <div class="proof-badge">
+      <span class="icon">🏆</span>
+      <div><strong>8+ turmas simultâneas</strong> gerenciadas com um único painel</div>
+    </div>
+    <div class="proof-badge">
+      <span class="icon">⚡</span>
+      <div>Identificação de risco <strong>semanal e automática</strong> — sem digitação manual</div>
+    </div>
+    <div class="proof-badge">
+      <span class="icon">📲</span>
+      <div>Acionamento via WhatsApp <strong>gerado por IA</strong> em segundos</div>
+    </div>
+    <div class="proof-badge">
+      <span class="icon">🔭</span>
+      <div>Janela de renovação visível com <strong>90 dias de antecedência</strong></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <strong>PerformanCS</strong> · Sistema de Gestão para Mentorias High Ticket<br>
+    Retenção · LTV · Performance
+  </div>
+</footer>
+
+<script>
+  function fmt(val) {
+    return 'R$ ' + Math.round(val).toLocaleString('pt-BR');
+  }
+
+  function calcular() {
+    const ticket = +document.getElementById('ticket').value;
+    const alunos = +document.getElementById('alunos').value;
+    const churn = +document.getElementById('churn').value / 100;
+    const renovacaoTx = +document.getElementById('renovacao').value / 100;
+    const ciclos = +document.getElementById('ciclos').value;
+
+    document.getElementById('ticket-val').textContent = fmt(ticket);
+    document.getElementById('alunos-val').textContent = alunos;
+    document.getElementById('churn-val').textContent = Math.round(churn * 100) + '%';
+    document.getElementById('renovacao-val').textContent = Math.round(renovacaoTx * 100) + '%';
+    document.getElementById('ciclos-val').textContent = ciclos;
+
+    // Churn recuperável: redução de 50% com CS estruturado
+    const alunosPerdidos = Math.round(alunos * churn);
+    const receitaChurnCiclo = alunosPerdidos * ticket;
+    const churnRecuperavel = Math.round(alunosPerdidos * 0.5); // 50% recuperáveis
+    const receitaRecuperavel = churnRecuperavel * ticket * ciclos;
+
+    // Renovações perdidas: sem CS estruturado, perde 60% das janelas de renovação
+    const alunosRenovacao = Math.round(alunos * renovacaoTx);
+    const renovacoesPerdidas = Math.round(alunosRenovacao * 0.6);
+    const receitaRenovacaoPerdidaAnual = renovacoesPerdidas * ticket * ciclos;
+
+    const total = receitaRecuperavel + receitaRenovacaoPerdidaAnual;
+
+    document.getElementById('r-alunos-perdidos').textContent = alunosPerdidos;
+    document.getElementById('r-receita-ciclo').textContent = fmt(receitaChurnCiclo);
+    document.getElementById('r-renovacoes').textContent = renovacoesPerdidas;
+    document.getElementById('r-renovacao-val').textContent = fmt(renovacoesPerdidas * ticket);
+    document.getElementById('r-total').textContent = fmt(total);
+
+    const results = document.getElementById('results');
+    if (results.style.display !== 'block') {
+      results.style.display = 'block';
+    }
+  }
+
+  // Inicializa calculadora
+  calcular();
+
+  // Smooth scroll para calculadora
+  document.querySelector('a[href="#calculadora"]').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('calculadora-section').scrollIntoView({ behavior: 'smooth' });
+  });
+</script>
+</body>
+</html>
