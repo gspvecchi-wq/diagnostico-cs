@@ -211,10 +211,10 @@ h1 .muted{color:var(--txt-3);display:block}
 .list-item{display:flex;gap:20px;align-items:flex-start;background:var(--surface);padding:26px 28px;transition:.2s}
 .list-item:hover{background:var(--surface-2)}
 .list-num{
-  flex-shrink:0;width:32px;height:32px;border-radius:9px;
+  flex-shrink:0;width:38px;height:38px;border-radius:10px;
   background:var(--accent-soft);border:1px solid var(--accent-line);
-  color:var(--accent);font-size:13px;font-weight:700;
-  display:grid;place-items:center;font-variant-numeric:tabular-nums;
+  font-size:18px;line-height:1;
+  display:grid;place-items:center;
 }
 .list-item p{font-size:17px;line-height:1.62;color:var(--txt-2)}
 .list-item p strong{color:var(--txt);font-weight:600}
@@ -470,7 +470,7 @@ footer{border-top:1px solid var(--line);padding:38px 0;background:var(--bg-2)}
 
     <p class="hero-sub">
       Existe um <strong>Segundo Funil</strong> — o que acontece <em>depois</em> da venda. É nele que está sua próxima
-      virada de faturamento: reter, renovar e ascender a base que você já pagou caro pra conquistar.
+      virada de faturamento: <strong>reter, renovar e ascender</strong> a base que você já pagou caro pra conquistar.
     </p>
     <p class="hero-sub" style="margin-top:18px">
       Nesta aula ao vivo eu te mostro como mentores estão faturando mais com a base que já têm
@@ -517,8 +517,10 @@ footer{border-top:1px solid var(--line);padding:38px 0;background:var(--bg-2)}
     </div>
     <div class="turn-body rv">
       <p>Você aprendeu a puxar aluno pra dentro. Tráfego, lançamento, VSL, aplicação, closer — tudo virado pra fora, pra conquistar gente nova.</p>
-      <p>Mas o dinheiro de verdade de uma mentoria não está na venda. Está na <strong>recorrência.</strong> E a recorrência mora no lugar que quase ninguém opera: o pós-venda.</p>
-      <p>É lá que o aluno bom some sem avisar. Que a renovação é decidida no chute. Que o upsell fica na mesa. Um vazamento silencioso que não aparece em nenhum relatório — só no fim do mês, quando a base não cresce do jeito que deveria.</p>
+      <p>Mas o dinheiro de verdade de uma mentoria não está na venda.</p>
+      <p>Está na <strong>recorrência.</strong> E a recorrência mora no lugar que quase ninguém opera: <strong>o pós-venda.</strong></p>
+      <p>É lá que o aluno bom some sem avisar. Que a renovação é decidida no chute. Que o upsell fica na mesa.</p>
+      <p>Um vazamento silencioso que não aparece em nenhum relatório — só no fim do mês, quando a base não cresce do jeito que deveria.</p>
       <p>E a resposta da maioria pra isso é sempre a mesma: <em>rodar mais tráfego.</em> Gastar mais pra entrar aluno novo por cima, enquanto o antigo escorre por baixo.</p>
       <div class="punch">Não é problema de aquisição. É a ausência do <span class="accent">Segundo Funil</span>.</div>
     </div>
@@ -597,23 +599,23 @@ footer{border-top:1px solid var(--line);padding:38px 0;background:var(--bg-2)}
 
     <div class="list rv">
       <div class="list-item">
-        <span class="list-num">01</span>
+        <span class="list-num" aria-hidden="true">🚪</span>
         <p>Por que muitas vezes são os seus <strong>melhores alunos</strong> que cancelam sem dar aviso — e qual comportamento mostra isso semanas antes, com tempo de sobra pra você agir</p>
       </div>
       <div class="list-item">
-        <span class="list-num">02</span>
+        <span class="list-num" aria-hidden="true">📚</span>
         <p>Por que melhorar o conteúdo da mentoria quase não mexe na sua taxa de cancelamento — e <strong>o que de fato faz o aluno renovar</strong></p>
       </div>
       <div class="list-item">
-        <span class="list-num">03</span>
+        <span class="list-num" aria-hidden="true">📈</span>
         <p>Por que sua próxima virada de faturamento <strong>não</strong> está no tráfego, e sim na base que você já tem</p>
       </div>
       <div class="list-item">
-        <span class="list-num">04</span>
+        <span class="list-num" aria-hidden="true">🏆</span>
         <p>Como uma mentoria de <strong>350 alunos cortou 30% dos cancelamentos em 2 meses</strong> — sem contratar mais ninguém pro time de CS</p>
       </div>
       <div class="list-item">
-        <span class="list-num">05</span>
+        <span class="list-num" aria-hidden="true">💸</span>
         <p>O erro invisível que faz você decidir renovação no feeling e <strong>deixar dinheiro na mesa todo mês</strong></p>
       </div>
     </div>
@@ -676,7 +678,7 @@ footer{border-top:1px solid var(--line);padding:38px 0;background:var(--bg-2)}
             <div class="host-role">O estrategista de receita</div>
           </div>
         </div>
-        <p>Estrategista de receita do <strong>Acelerador Médico</strong>. Escalou a operação de <strong>R$ 6 milhões para R$ 52 milhões por ano em 2 anos.</strong> Passou os últimos anos construindo o funil de aquisição de dezenas de mentorias — até perceber que o crescimento estava vazando pelo lado que ninguém olhava.</p>
+        <p>Já gerou <strong>mais de R$ 90 milhões</strong> atuando nos bastidores de grandes operações digitais. Passou anos construindo o funil de aquisição de dezenas de mentorias — até perceber que o crescimento estava vazando pelo lado que ninguém olhava.</p>
       </div>
 
       <div class="host rv">
@@ -690,7 +692,7 @@ footer{border-top:1px solid var(--line);padding:38px 0;background:var(--bg-2)}
             <div class="host-role">O arquiteto do sistema</div>
           </div>
         </div>
-        <p>Sócio de Gabriel e gestor do <strong>Acelerador Médico</strong>. É o cérebro técnico por trás do sistema que transformou o pós-venda da operação. Foi ele quem traduziu o problema em um motor que enxerga o que o time de CS não conseguia ver a olho nu.</p>
+        <p>A mente por trás do <strong>motor de retenção com IA</strong>. Tem duas décadas atuando em empresas nacionais e multinacionais na retenção, ascensão e renovação de clientes. Pegou um problema que toda mentoria tem — e transformou em tecnologia: um sistema que enxerga o que o time de CS nunca consegue enxergar sozinho.</p>
       </div>
     </div>
 
