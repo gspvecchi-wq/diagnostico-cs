@@ -854,6 +854,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 </div>
 
 <script>
+/* ---------- dataLayer helper (GTM) ---------- */
+window.dataLayer = window.dataLayer || [];
+function dl(obj){ window.dataLayer.push(obj); }
+
 /* ---------- countdown até 11/08 19h (BRT = UTC-3) ---------- */
 (function(){
   var target = new Date('2026-08-11T19:00:00-03:00').getTime();
@@ -908,7 +912,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   document.querySelectorAll('[data-open]').forEach(function(btn){
-    btn.addEventListener('click', function(){ open(btn); });
+    btn.addEventListener('click', function(){
+      dl({ event: 'cta_abrir_form', cta_texto: (btn.textContent || '').replace(/\s+/g, ' ').trim() });
+      open(btn);
+    });
   });
   modal.querySelectorAll('[data-close]').forEach(function(btn){
     btn.addEventListener('click', close);
@@ -992,12 +999,13 @@ var CONFIG = {
     var t = setInterval(function(){
       n--;
       alvo.textContent = n;
-      if (n <= 0) { clearInterval(t); window.location.href = CONFIG.grupo; }
+      if (n <= 0) { clearInterval(t); dl({ event: 'grupo_whatsapp', metodo: 'redirect' }); window.location.href = CONFIG.grupo; }
     }, 1000);
 
     // se a pessoa clicar no botão, o redirect automático perde a razão de existir
     document.getElementById('btn-grupo').addEventListener('click', function(){
       clearInterval(t);
+      dl({ event: 'grupo_whatsapp', metodo: 'clique' });
       document.querySelector('.redir').style.display = 'none';
     });
   }
@@ -1010,9 +1018,11 @@ var CONFIG = {
     return false;
   }
 
+  var comecou = false;
+  function iniciar(){ if (!comecou) { comecou = true; dl({ event: 'form_iniciado' }); } }
   form.querySelectorAll('input,select').forEach(function(input){
-    input.addEventListener('input',  function(){ input.closest('.field').classList.remove('err'); });
-    input.addEventListener('change', function(){ input.closest('.field').classList.remove('err'); });
+    input.addEventListener('input',  function(){ iniciar(); input.closest('.field').classList.remove('err'); });
+    input.addEventListener('change', function(){ iniciar(); input.closest('.field').classList.remove('err'); });
   });
 
   form.addEventListener('submit', function(e){
@@ -1025,7 +1035,11 @@ var CONFIG = {
       if (bad && !first) first = input;
     });
 
-    if (first) { first.focus(); return; }
+    if (first) {
+      dl({ event: 'form_erro_validacao', campo_invalido: first.id || first.name || '' });
+      first.focus();
+      return;
+    }
 
     var data = {};
     new FormData(form).forEach(function(value, key){ data[key] = value; });
@@ -1034,6 +1048,16 @@ var CONFIG = {
     data.utm_medium   = utm('utm_medium');
     data.utm_campaign = utm('utm_campaign');
     data.pagina       = window.location.href;
+
+    // conversão principal — sem PII (nome/e-mail/whatsapp ficam fora do dataLayer)
+    dl({
+      event: 'gerar_lead',
+      mentorados: data.mentorados || '',
+      faturamento: data.faturamento || '',
+      utm_source: data.utm_source,
+      utm_medium: data.utm_medium,
+      utm_campaign: data.utm_campaign
+    });
 
     btn.disabled = true;
     btn.innerHTML = 'Enviando…';
